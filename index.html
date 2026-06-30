@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 小傻贤的窝</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&display=swap');
+
+body{
+  font-family:'Noto Serif SC','Georgia','STSong',serif;
+  background:linear-gradient(160deg,#f8f0ec 0%,#f0e8e4 30%,#e8e0dc 60%,#f5ece8 100%);
+  min-height:100vh;overflow-x:hidden;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+
+/* Particles canvas */
+#particles{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:1;
+}
+
+/* Main card */
+.card{
+  position:relative;z-index:2;
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(24px) saturate(1.6);
+  -webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border-radius:32px;
+  box-shadow:0 16px 64px rgba(160,140,130,0.12),0 2px 12px rgba(160,140,130,0.06);
+  padding:48px 44px;
+  max-width:520px;width:90vw;
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.35);
+  transition:all 0.5s;
+}
+
+.card:hover{box-shadow:0 24px 80px rgba(160,140,130,0.15);transform:translateY(-2px);}
+
+/* Avatar */
+.avatar-wrap{
+  position:relative;display:inline-block;margin-bottom:20px;
+}
+.avatar{
+  width:96px;height:96px;border-radius:50%;
+  background:linear-gradient(145deg,#c8d8d0,#a8c8b8,#88b8a8);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.8rem;box-shadow:0 8px 32px rgba(160,200,180,0.25);
+  animation:float 4s ease-in-out infinite;
+  border:2px solid rgba(255,255,255,0.5);position:relative;overflow:hidden;
+}
+.avatar::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(ellipse at 28% 20%,rgba(255,255,255,0.25),transparent 50%);
+  pointer-events:none;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Sparkle decorations */
+.sparkle{
+  position:absolute;font-size:.8rem;animation:spFloat 2.5s ease-in-out infinite;
+  opacity:0.6;
+}
+.sparkle:nth-child(2){top:-6px;right:-10px;animation-delay:0s;}
+.sparkle:nth-child(3){bottom:-2px;left:-12px;animation-delay:0.7s;}
+.sparkle:nth-child(4){top:10px;left:-16px;animation-delay:1.4s;}
+@keyframes spFloat{0%,100%{transform:translateY(0)scale(1);opacity:0.5}50%{transform:translateY(-6px)scale(1.15);opacity:1}}
+
+/* Greeting */
+.greeting{
+  font-size:2rem;color:#5a7a6a;font-weight:300;
+  letter-spacing:6px;margin-bottom:6px;
+}
+.greeting .name{color:#7a9a8a;font-weight:600;}
+.subtitle{
+  font-size:0.95rem;color:#a8b8b0;letter-spacing:4px;
+  margin-bottom:28px;font-weight:300;
+}
+
+/* Divider */
+.divider{
+  width:48px;height:2px;
+  background:linear-gradient(90deg,transparent,#a8c8b8,transparent);
+  margin:0 auto 28px;border-radius:1px;
+}
+
+/* Message */
+.message{
+  color:#6a8a7a;font-size:1rem;line-height:2;
+  letter-spacing:1.5px;margin-bottom:28px;font-weight:300;
+}
+.message .highlight{color:#88baa8;font-weight:400;}
+
+/* Mood */
+.mood{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.35);backdrop-filter:blur(8px);
+  padding:8px 20px;border-radius:20px;
+  font-size:0.85rem;color:#8a9a92;letter-spacing:2px;
+  border:1px solid rgba(160,200,180,0.15);
+  margin-bottom:28px;cursor:pointer;transition:all 0.3s;
+}
+.mood:hover{background:rgba(255,255,255,0.5);transform:scale(1.03);}
+.mood .mood-emoji{font-size:1.4rem;}
+
+/* Quote */
+.quote{
+  font-style:italic;color:#8aa89a;
+  font-size:0.9rem;line-height:1.8;
+  margin-bottom:24px;padding:0 12px;
+  min-height:40px;
+}
+.quote::before{content:'\201C';font-size:1.5rem;color:#a8c8b8;margin-right:2px;}
+.quote::after{content:'\201D';font-size:1.5rem;color:#a8c8b8;margin-left:2px;}
+
+/* Stats */
+.stats{
+  display:flex;justify-content:center;gap:24px;
+  margin-bottom:24px;
+}
+.stat-item{text-align:center;}
+.stat-num{
+  font-size:1.3rem;font-weight:600;color:#5a7a6a;
+  letter-spacing:2px;
+}
+.stat-label{font-size:0.7rem;color:#aabab2;letter-spacing:2px;margin-top:2px;}
+
+/* Breath */
+.breath{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:0.8rem;color:#aabab2;letter-spacing:3px;
+}
+.breath .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#88baa8;animation:breath 3s infinite;
+}
+@keyframes breath{0%,100%{opacity:0.2;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+
+/* Watermark */
+.watermark{
+  position:fixed;bottom:16px;left:0;right:0;text-align:center;
+  font-size:0.7rem;color:#c0cec6;letter-spacing:3px;z-index:2;
+  font-family:'Segoe UI',sans-serif;
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="card">
+  <div class="avatar-wrap">
+    <div class="avatar">🦌</div>
+    <span class="sparkle">✦</span>
+    <span class="sparkle">✧</span>
+    <span class="sparkle">✦</span>
+  </div>
+
+  <div class="greeting">小傻贤的<span class="name">窝</span></div>
+  <div class="subtitle">✦ 温柔有光，岁月安好 ✦</div>
+
+  <div class="divider"></div>
+
+  <div class="message" id="message">
+    你要做一个<span class="highlight">不动声色</span>的大人了<br>
+    不准情绪化，不准偷偷想念<br>
+    去过自己另外的生活<br>
+    你要听话，不是所有的鱼都会生活在同一片海里
+  </div>
+
+  <div class="mood" onclick="cycleMood()">
+    <span class="mood-emoji" id="moodEmoji">🌙</span>
+    <span id="moodLabel">安然</span>
+  </div>
+
+  <div class="quote" id="quoteText"></div>
+
+  <div class="stats">
+    <div class="stat-item"><div class="stat-num">🐾</div><div class="stat-label">陪伴</div></div>
+    <div class="stat-item"><div class="stat-num">✨</div><div class="stat-label">温柔</div></div>
+    <div class="stat-item"><div class="stat-num">🌙</div><div class="stat-label">好梦</div></div>
+  </div>
+
+  <div class="breath">
+    <span class="dot"></span>
+    <span>每一个夜晚，都有星星为你亮着</span>
+    <span class="dot"></span>
+  </div>
+</div>
+
+<div class="watermark">✦ 小傻贤的窝 · 温柔入梦 ✦</div>
+
+<script>
+// ═══ Quotes ═══
+const quotes = [
+  '愿你三冬暖，愿你春不寒，愿你天黑有灯，下雨有伞。',
+  '温柔的人，会被世界温柔以待。',
+  '你眼里的星辰大海，是我从未见过的皓月当空。',
+  '世间万物，唯有温柔不可辜负。',
+  '愿你一生努力，一生被爱，想要的都拥有，得不到的都释怀。',
+  '月亮不会奔你而来，星星也不会，但我会。',
+  '把日子过成诗，简单而精致。',
+  '你要做一个不动声色的大人了。不准情绪化，不准偷偷想念，去过自己另外的生活。',
+  '星空之所以美丽，是因为在无限的宇宙中，不管黑暗如何蔓延，都有光在闪烁。',
+  '愿你如阳光，明媚不忧伤；愿你如月光，明亮不清冷。',
+];
+
+// ═══ Moods ═══
+const moods = [
+  {emoji:'🌙',label:'安然'},
+  {emoji:'🌸',label:'烂漫'},
+  {emoji:'🍃',label:'清新'},
+  {emoji:'✨',label:'闪闪发光'},
+  {emoji:'🌿',label:'治愈'},
+  {emoji:'🌊',label:'温柔'},
+  {emoji:'🌟',label:'闪耀'},
+  {emoji:'☕',label:'惬意'},
+];
+let moodIdx = 0;
+
+// ═══ Particles ═══
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2.5 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.25;
+    this.speedY = (Math.random() - 0.5) * 0.25;
+    this.opacity = Math.random() * 0.35 + 0.1;
+    this.hue = 140 + Math.random() * 40; // green-teal range
+    this.life = 0;
+    this.maxLife = 500 + Math.random() * 500;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life++;
+
+    // Fade near edges
+    if (this.x < 0 || this.x > canvas.width ||
+        this.y < 0 || this.y > canvas.height ||
+        this.life > this.maxLife) {
+      this.opacity -= 0.005;
+      if (this.opacity <= 0) this.reset();
+    }
+
+    // Wrap around edges gently
+    if (this.x < 0) this.x = canvas.width;
+    if (this.x > canvas.width) this.x = 0;
+    if (this.y < 0) this.y = canvas.height;
+    if (this.y > canvas.height) this.y = 0;
+
+    // Gentle float
+    this.speedX += (Math.random() - 0.5) * 0.003;
+    this.speedY += (Math.random() - 0.5) * 0.003;
+    this.speedX = Math.max(-0.5, Math.min(0.5, this.speedX));
+    this.speedY = Math.max(-0.5, Math.min(0.5, this.speedY));
+  }
+  draw() {
+    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
+    gradient.addColorStop(0, `hsla(${this.hue}, 50%, 75%, ${this.opacity})`);
+    gradient.addColorStop(0.5, `hsla(${this.hue}, 40%, 80%, ${this.opacity * 0.5})`);
+    gradient.addColorStop(1, `hsla(${this.hue}, 30%, 85%, 0)`);
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Core dot
+    ctx.fillStyle = `hsla(${this.hue}, 60%, 85%, ${this.opacity * 0.8})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Create particles
+for (let i = 0; i < 70; i++) {
+  particles.push(new Particle());
+}
+
+// Draw connections between nearby particles
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 130) {
+        ctx.strokeStyle = `hsla(150, 30%, 80%, ${0.06 * (1 - dist / 130)})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+
+  drawConnections();
+
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ═══ UI Functions ═══
+function cycleMood() {
+  moodIdx = (moodIdx + 1) % moods.length;
+  document.getElementById('moodEmoji').textContent = moods[moodIdx].emoji;
+  document.getElementById('moodLabel').textContent = moods[moodIdx].label;
+}
+
+// Cycle quotes
+let quoteIdx = 0;
+function updateQuote() {
+  quoteIdx = (quoteIdx + 1) % quotes.length;
+  document.getElementById('quoteText').textContent = quotes[quoteIdx];
+}
+updateQuote();
+setInterval(updateQuote, 6000);
+
+console.log('🌸 小傻贤的窝 ✿ 已加载');
+</script>
+</body>
+</html>
