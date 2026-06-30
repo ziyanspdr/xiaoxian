@@ -564,7 +564,7 @@ setTimeout(updateTotalMemories,200);
 
 // ═══ GALLERY ═══
 var galleryImages=[{src:'photos/a1.jpg',caption:'晨光微曦'},{src:'photos/a2.jpg',caption:'花开半夏'},{src:'photos/a3.jpg',caption:'街角咖啡'},{src:'',caption:'海风轻拂'},{src:'',caption:'落日余晖'},{src:'',caption:'慵懒午后'},{src:'',caption:'雨后初晴'},{src:'',caption:'秋叶私语'},{src:'',caption:'城市微光'},{src:'',caption:'星河入梦'},{src:'',caption:'微风与你'},{src:'',caption:'时光定格'}];
-(function(){var grid=document.getElementById('galleryGrid');galleryImages.forEach(function(img,i){var item=document.createElement('div');item.className='gallery-item';if(img.src){item.innerHTML='<img src="'+img.src+'" alt="'+img.caption+'" loading="lazy"><div class="overlay"><span>'+img.caption+'</span></div>'}else{var emojis=['🌊','🌅','☕','🌈','🍂','🏙️','🌌','🍃','⏳'];item.style.background='linear-gradient(135deg, #c8d8d0, #a8c8b8)';item.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4">'+emojis[i-3]+'</div><div class="overlay"><span>'+img.caption+'</span></div>'}item.onclick=function(){openGalleryLightbox(i)};grid.appendChild(item)})})();
+(function(){var g=document.getElementById('galleryGrid');galleryImages.forEach(function(x,i){var e=document.createElement('div');e.className='gallery-item';if(x.src){e.innerHTML='<img src="'+x.src+'" alt="'+x.caption+'" loading=lazy><div class=overlay><span>'+x.caption+'</span></div>'}else{var em=['🌊','🌅','☕','🌈','🍂','🏙️','🌌','🍃','⏳'];e.style.background='linear-gradient(135deg,#c8d8d0,#a8c8b8)';e.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.4">'+em[i-3]+'</div><div class=overlay><span>'+x.caption+'</span></div>'}e.onclick=function(){openGalleryLightbox(i)};g.appendChild(e)});})();
 
 var galleryIdx=0,lb=document.getElementById('lightbox'),lbContent=document.getElementById('lightboxContent'),lbCaption=document.getElementById('lightboxCaption'),lbCounter=document.getElementById('lightboxCounter');
 function openGalleryLightbox(idx){galleryIdx=idx;updateGalleryLightbox();lb.classList.add('active');document.body.style.overflow='hidden'}
@@ -664,7 +664,6 @@ function handleAvatarUpload(event){
   };
   reader.readAsDataURL(file);event.target.value="";
 }
-}
 
 function updateAllAvatars(imageData){
   var all=[document.getElementById('heroAvatar'),document.getElementById('navAvatar'),document.getElementById('composerAvatar')];
@@ -693,7 +692,7 @@ function resetAvatar(){
   renderMoments();showToast('已恢复默认头像');
 }
 
-function loadAvatar(){var saved=localStorage.getItem('xx_avatar');if(saved)updateAllAvatars(saved);else ghLoad('avatar',function(d){if(d){localStorage.setItem('xx_avatar',d);updateAllAvatars(d)}})}
+function loadAvatar(){var saved=localStorage.getItem('xx_avatar');if(saved)updateAllAvatars(saved)}
 loadAvatar();
 
 
@@ -765,6 +764,6 @@ setTimeout(initMQTT,800);
 setTimeout(updateTotalMemories,500);
 setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden')},600);
 console.log('🌸 小傻贤的窝 ✿ v1.0');
-</script>
+</script></script>
 </body>
 </html>
