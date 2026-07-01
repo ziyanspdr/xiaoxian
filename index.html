@@ -729,7 +729,7 @@ function initMQTT(){
   if(typeof mqtt==='undefined'){showSyncStatus('disconnected');return}
   try{
     showSyncStatus('connecting');
-    _mqttClient=mqtt.connect('wss://broker.emqx.io:8084/mqtt',{clientId:'xx_'+Math.random().toString(36).substring(2,10),clean:true,connectTimeout:10000,reconnectPeriod:5000});
+    _mqttClient=mqtt.connect('wss://broker-cn.emqx.io:8084/mqtt',{clientId:'xx_'+Math.random().toString(36).substring(2,10),clean:true,connectTimeout:10000,reconnectPeriod:5000});
     _mqttClient.on('connect',function(){
       _mqttConnected=true;showSyncStatus('connected');
       _mqttClient.subscribe('xiaoxian/sync',{qos:0},function(err){
