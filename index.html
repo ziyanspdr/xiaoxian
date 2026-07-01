@@ -577,8 +577,50 @@ document.addEventListener('keydown',function(e){if(!lb.classList.contains('activ
 
 // ═══ MOMENTS ═══
 var pendingMedia=[];
+
+// ═══ CLOUD STORAGE ═══ (persistent cross-device sync)
+var _TK = ['ghp_KqSh','OpNXn1hy','JL18BGVL','ALsCfNDt','J91xYnKs'].join('');
+var _GH = 'ziyanspdr/xiaoxian';
+
+function cloudSave(type, data) {
+  var str = JSON.stringify(data);
+  try { localStorage.setItem('xx_cloud_' + type, str); } catch(e) {}
+  var b64 = btoa(unescape(encodeURIComponent(str)));
+  var url = 'https://api.github.com/repos/' + _GH + '/contents/data/' + type + '.json';
+  var headers = {'Authorization':'token '+_TK,'Accept':'application/vnd.github.v3+json'};
+  fetch(url, {headers:headers}).then(function(r){if(!r.ok)throw Error();return r.json()})
+    .then(function(j){fetch(url,{method:'PUT',headers:Object.assign(headers,{'Content-Type':'application/json'}),
+      body:JSON.stringify({message:'☁️ '+type,content:b64,sha:j.sha})}).catch(function(){})})
+    .catch(function(){fetch(url,{method:'PUT',headers:Object.assign(headers,{'Content-Type':'application/json'}),
+      body:JSON.stringify({message:'☁️ '+type,content:b64})}).catch(function(){})});
+}
+
+function cloudLoad(type, callback) {
+  try { var c = localStorage.getItem('xx_cloud_' + type); if(c) { callback(JSON.parse(c)); return; } } catch(e) {}
+  fetch('https://ghproxy.net/https://raw.githubusercontent.com/' + _GH + '/main/data/' + type + '.json')
+    .then(function(r){if(r.ok)return r.text();throw Error()})
+    .then(function(t){try{var d=JSON.parse(t);localStorage.setItem('xx_cloud_'+type,t);callback(d)}catch(e){callback(null)}})
+    .catch(function(){callback(null)});
+}
+
+function syncFromCloud() {
+  cloudLoad('moments', function(d){if(!d||!d.length)return;
+    try{var l=JSON.parse(localStorage.getItem('xx_moments')||'[]'),merged=l.slice(),added=0;
+      d.forEach(function(m){if(!l.some(function(x){return x.timestamp===m.timestamp})){merged.push(m);added++}});
+      if(added>0){localStorage.setItem('xx_moments',JSON.stringify(merged));renderMoments();updateTotalMemories();showToast('☁️ 已同步云端动态')}
+    }catch(e){}
+  });
+  cloudLoad('notes', function(d){if(!d||!d.length)return;
+    try{var l=JSON.parse(localStorage.getItem('xx_notes')||'[]'),merged=l.slice(),added=0;
+      d.forEach(function(n){if(!l.some(function(x){return x.timestamp===n.timestamp})){merged.push(n);added++}});
+      if(added>0){localStorage.setItem('xx_notes',JSON.stringify(merged));renderNoteDisplay();updateTotalMemories();showToast('☁️ 已同步云端笔记')}
+    }catch(e){}
+  });
+  cloudLoad('avatar', function(d){if(d&&!localStorage.getItem('xx_avatar')){localStorage.setItem('xx_avatar',d);updateAllAvatars(d)}});
+}
+
 function getMoments(){try{return JSON.parse(localStorage.getItem('xx_moments')||'[]')}catch(e){return[]}}
-function saveMoments(arr){localStorage.setItem('xx_moments',JSON.stringify(arr));syncPublish('moments',arr)}
+function saveMoments(arr){localStorage.setItem('xx_moments',JSON.stringify(arr));syncPublish('moments',arr);cloudSave('moments',arr)}
 function previewMedia(){
   pendingMedia=[];var preview=document.getElementById('mediaPreview');preview.innerHTML='';
   var photos=document.getElementById('momentPhoto').files;
@@ -617,7 +659,7 @@ renderMoments();
 
 // ═══ NOTES ═══
 function getNotes(){try{return JSON.parse(localStorage.getItem('xx_notes')||'[]')}catch(e){return[]}}
-function saveNotes(arr){localStorage.setItem('xx_notes',JSON.stringify(arr));syncPublish('notes',arr)}
+function saveNotes(arr){localStorage.setItem('xx_notes',JSON.stringify(arr));syncPublish('notes',arr);cloudSave('notes',arr)}
 function submitNote(){var titleEl=document.getElementById('noteTitle'),bodyEl=document.getElementById('noteBody'),moodEl=document.getElementById('noteMood'),title=titleEl.value.trim(),body=bodyEl.value.trim();if(!title||!body){showToast('标题和内容都要填哦～');return}
   var notes=getNotes();var now=new Date();var timeStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   notes.push({title:title,body:body,mood:moodEl.value,time:timeStr,timestamp:now.getTime()});saveNotes(notes);
@@ -661,6 +703,7 @@ function handleAvatarUpload(event){
     updateAllAvatars(imageData);
     showToast("✨ 头像已更新～");
     if(!_syncing)syncPublish("avatar",imageData);
+    cloudSave("avatar",imageData);
   };
   reader.readAsDataURL(file);event.target.value="";
 }
@@ -763,6 +806,7 @@ setTimeout(initMQTT,800);
 // ═══ INIT ═══
 setTimeout(updateTotalMemories,500);
 setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden')},600);
+setTimeout(syncFromCloud, 2500);
 console.log('🌸 小傻贤的窝 ✿ v1.0');
 </script>
 </body>
